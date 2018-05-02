@@ -1,0 +1,146 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ANY_STRING	strings.h	35;"	d
+ASM_SRCS	sources.mk	/^ASM_SRCS := $/;"	m
+C_DEPS	sources.mk	/^C_DEPS := $/;"	m
+C_SRCS	sources.mk	/^C_SRCS := $/;"	m
+ETHERNET_LEN	pcap2sipp.h	43;"	d
+EXECUTABLES	sources.mk	/^EXECUTABLES := $/;"	m
+INITIATOR	pcap2sipp.h	40;"	d
+IP_STRING	strings.h	31;"	d
+LIBS	objects.mk	/^LIBS := -lpcap$/;"	m
+LINE_LEN	pcap2sipp.h	37;"	d
+LINUX_COOKED_LEN	pcap2sipp.h	44;"	d
+NAME_STRING	strings.h	32;"	d
+NODES_H_	nodes.h	28;"	d
+NUMBER_STRING	strings.h	33;"	d
+OBJS	sources.mk	/^OBJS := $/;"	m
+OBJ_SRCS	sources.mk	/^OBJ_SRCS := $/;"	m
+O_SRCS	sources.mk	/^O_SRCS := $/;"	m
+PCAP2SIPP_H_	pcap2sipp.h	28;"	d
+PORT_STRING	strings.h	34;"	d
+REPLIER	pcap2sipp.h	41;"	d
+REPLY	pcap2sipp.h	39;"	d
+REQUEST	pcap2sipp.h	38;"	d
+RM	makefile	/^RM := rm -rf$/;"	m
+SIP_IDENTIFYER	pcap2sipp.h	42;"	d
+STRINGS_H_	strings.h	28;"	d
+SUBDIRS	sources.mk	/^SUBDIRS := \\$/;"	m
+S_UPPER_SRCS	sources.mk	/^S_UPPER_SRCS := $/;"	m
+USER_OBJS	objects.mk	/^USER_OBJS :=$/;"	m
+add_ipnodes	nodes.c	/^int add_ipnodes(ip_node **node, ip_address address){$/;"	f
+add_stringnodes	nodes.c	/^int add_stringnodes(string_node **node, char *address){$/;"	f
+addr	nodes.h	/^	ip_address addr;$/;"	m	struct:ip_node
+byte1	nodes.h	/^    u_char byte1;$/;"	m	struct:ip_address
+byte2	nodes.h	/^    u_char byte2;$/;"	m	struct:ip_address
+byte3	nodes.h	/^    u_char byte3;$/;"	m	struct:ip_address
+byte4	nodes.h	/^    u_char byte4;$/;"	m	struct:ip_address
+call_number	pcap2sipp.h	/^char* call_number="[call_number]";$/;"	v
+callid	pcap2sipp.h	/^	char *callid;$/;"	m	struct:sip_contents
+callids	pcap2sipp.h	/^string_node *callids;$/;"	v
+contents	nodes.h	/^	char *contents;$/;"	m	struct:string_node
+crc	pcap2sipp.h	/^	u_short crc;            \/\/ Checksum$/;"	m	struct:udp_header
+crc	pcap2sipp.h	/^	u_short crc;            \/\/ Header checksum$/;"	m	struct:ip_header
+daddr	pcap2sipp.h	/^	ip_address  daddr;      \/\/ Destination address$/;"	m	struct:ip_header
+datalink	pcap2sipp.h	/^int datalink;$/;"	v
+datalink_length	pcap2sipp.h	/^int datalink_length;$/;"	v
+dport	pcap2sipp.h	/^	u_short dport;          \/\/ Destination port$/;"	m	struct:udp_header
+ether_dhost	pcap2sipp.h	/^	u_char ether_dhost[ETHER_ADDR_LEN];\/* destination ethernet address *\/$/;"	m	struct:ethernet_header
+ether_shost	pcap2sipp.h	/^	u_char ether_shost[ETHER_ADDR_LEN];\/* source ethernet address *\/$/;"	m	struct:ethernet_header
+ether_type	pcap2sipp.h	/^	u_int16_t ether_type;                 \/* protocol *\/$/;"	m	struct:ethernet_header
+ethernet_header	pcap2sipp.h	/^typedef struct ethernet_header$/;"	s
+ethernet_header	pcap2sipp.h	/^}ethernet_header;$/;"	t	typeref:struct:ethernet_header
+ethernet_length	pcap2sipp.c	/^int ethernet_length(const u_char *pkt_data, const int datalink) {$/;"	f
+flags_fo	pcap2sipp.h	/^	u_short flags_fo;       \/\/ Flags (3 bits) + Fragment offset (13 bits)$/;"	m	struct:ip_header
+fvalue	pcap2sipp.h	/^char *fvalue;$/;"	v
+get_callid	pcap2sipp.c	/^char *get_callid(char *sc){$/;"	f
+handle_all_headers	pcap2sipp.c	/^char *handle_all_headers(char *rep, int type, char *saddr, char *daddr){$/;"	f
+handle_authorization_header	pcap2sipp.c	/^char *handle_authorization_header(char *rep){$/;"	f
+handle_callid_header	pcap2sipp.c	/^char *handle_callid_header(char *rep){$/;"	f
+handle_contact_header	pcap2sipp.c	/^char *handle_contact_header(char *rep, char *saddr){$/;"	f
+handle_cseq_header	pcap2sipp.c	/^char *handle_cseq_header(char *rep, int type){$/;"	f
+handle_from_header	pcap2sipp.c	/^char *handle_from_header(char *rep, int type, char *saddr, char *daddr){$/;"	f
+handle_prauthorization_header	pcap2sipp.c	/^char *handle_prauthorization_header(char *rep){$/;"	f
+handle_receive	pcap2sipp.c	/^int handle_receive(char *text, int type){$/;"	f
+handle_requestline	pcap2sipp.c	/^char *handle_requestline(char *rep, char *daddr){$/;"	f
+handle_sdp_m_header	pcap2sipp.c	/^char *handle_sdp_m_header(char *rep){$/;"	f
+handle_to_header	pcap2sipp.c	/^char *handle_to_header(char *rep, int type, char *saddr, char *daddr){$/;"	f
+handle_via_header	pcap2sipp.c	/^char *handle_via_header(char *rep, int type, char *saddr, char *daddr){$/;"	f
+has_totag	pcap2sipp.c	/^int has_totag(char *sc){$/;"	f
+header_has_tag	pcap2sipp.c	/^int header_has_tag(char *sc){$/;"	f
+i_am_initiator	pcap2sipp.h	/^int i_am_initiator=0;$/;"	v
+identification	pcap2sipp.h	/^	u_short identification; \/\/ Identification$/;"	m	struct:ip_header
+in_ipnodelist	nodes.c	/^int in_ipnodelist(ip_node *node, ip_address address){$/;"	f
+in_stringlist	nodes.c	/^int in_stringlist(string_node *node, char* address){$/;"	f
+injection_file_path	pcap2sipp.h	/^char *injection_file_path="\/tmp\/sipp_injection.csv";$/;"	v
+ip_address	nodes.h	/^typedef struct ip_address{$/;"	s
+ip_address	nodes.h	/^}ip_address;$/;"	t	typeref:struct:ip_address
+ip_addresses	pcap2sipp.h	/^ip_node *ip_addresses;$/;"	v
+ip_header	pcap2sipp.h	/^typedef struct ip_header{$/;"	s
+ip_header	pcap2sipp.h	/^}ip_header;$/;"	t	typeref:struct:ip_header
+ip_node	nodes.h	/^typedef struct ip_node{$/;"	s
+ip_node	nodes.h	/^} ip_node;$/;"	t	typeref:struct:ip_node
+is_sip	pcap2sipp.c	/^int is_sip(char *sc){$/;"	f
+last_reply	pcap2sipp.h	/^char* last_reply;$/;"	v
+last_sdp	pcap2sipp.h	/^int last_sdp=0;$/;"	v
+len	pcap2sipp.h	/^	u_short len;            \/\/ Datagram length$/;"	m	struct:udp_header
+local_ip	pcap2sipp.h	/^char *local_ip;$/;"	v
+local_name	pcap2sipp.h	/^char *local_name;$/;"	v
+local_nr	pcap2sipp.h	/^char *local_nr;$/;"	v
+local_password	pcap2sipp.h	/^char *local_password;$/;"	v
+local_port	pcap2sipp.h	/^int local_port;$/;"	v
+long_options	pcap2sipp.h	/^static struct option long_options[] =$/;"	v	typeref:struct:option
+main	pcap2sipp.c	/^int main(int argc, char **argv) {$/;"	f
+method	pcap2sipp.h	/^	char *method;$/;"	m	struct:sip_contents
+next	nodes.h	/^	struct ip_node *next;$/;"	m	struct:ip_node	typeref:struct:ip_node::ip_node
+next	nodes.h	/^	struct string_node *next;$/;"	m	struct:string_node	typeref:struct:string_node::string_node
+op_pad	pcap2sipp.h	/^	u_int   op_pad;         \/\/ Option + Padding$/;"	m	struct:ip_header
+ovalue	pcap2sipp.h	/^char *ovalue;$/;"	v
+packet_handler_callids	pcap2sipp.c	/^void packet_handler_callids(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data) {$/;"	f
+packet_handler_ips	pcap2sipp.c	/^void packet_handler_ips(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data)$/;"	f
+packet_handler_simulate	pcap2sipp.c	/^void packet_handler_simulate(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data) {$/;"	f
+peer_tag_param	pcap2sipp.h	/^char* peer_tag_param="[peer_tag_param]";$/;"	v
+port	pcap2sipp.h	/^int port;$/;"	v
+prefix	pcap2sipp.h	/^char *prefix = "\/home\/";$/;"	v
+print_injection_file	pcap2sipp.c	/^int print_injection_file(){$/;"	f
+print_ipnodes	nodes.c	/^int print_ipnodes(ip_node *node){$/;"	f
+print_stringnodes	nodes.c	/^int print_stringnodes(string_node *node){$/;"	f
+print_usage	pcap2sipp.c	/^void print_usage(){$/;"	f
+proto	pcap2sipp.h	/^	u_char  proto;          \/\/ Protocol$/;"	m	struct:ip_header
+read_configs	pcap2sipp.c	/^int read_configs(int argc, char **argv){$/;"	f
+remote_ip	pcap2sipp.h	/^char *remote_ip;$/;"	v
+remote_name	pcap2sipp.h	/^char *remote_name;$/;"	v
+remote_nr	pcap2sipp.h	/^char *remote_nr;$/;"	v
+remote_port	pcap2sipp.h	/^int remote_port;$/;"	v
+replace	strings.c	/^char *replace(const char *src, const char *from, const char *to, int type) {$/;"	f
+replace_after	strings.c	/^char *replace_after(const char *src, const char *from, const char *until, const char *to, int or_end) {$/;"	f
+rtp_file_path	pcap2sipp.h	/^char *rtp_file_path="\/tmp\/rtp.pcap";$/;"	v
+saddr	pcap2sipp.h	/^	ip_address  saddr;      \/\/ Source address$/;"	m	struct:ip_header
+scenario_file	pcap2sipp.h	/^FILE *scenario_file;$/;"	v
+scenario_file_path	pcap2sipp.h	/^char *scenario_file_path="\/tmp\/sipp_scenario.xml";$/;"	v
+sdp_end_time	pcap2sipp.h	/^int sdp_end_time=0;$/;"	v
+sdp_millisecs	pcap2sipp.h	/^int sdp_millisecs=0;$/;"	v
+sdp_port	pcap2sipp.h	/^int sdp_port=0;$/;"	v
+sdp_start_time	pcap2sipp.h	/^int sdp_start_time=0;$/;"	v
+sim_callid	pcap2sipp.h	/^char *sim_callid;$/;"	v
+sim_ip	pcap2sipp.h	/^char *sim_ip;$/;"	v
+sip_contents	pcap2sipp.h	/^typedef struct sip_contents{$/;"	s
+sip_contents	pcap2sipp.h	/^}sip_contents;$/;"	t	typeref:struct:sip_contents
+sport	pcap2sipp.h	/^	u_short sport;          \/\/ Source port$/;"	m	struct:udp_header
+string_node	nodes.h	/^typedef struct string_node{$/;"	s
+string_node	nodes.h	/^} string_node;$/;"	t	typeref:struct:string_node
+text	pcap2sipp.h	/^	char *text;$/;"	m	struct:sip_contents
+this_is_first_request	pcap2sipp.h	/^int this_is_first_request=1;$/;"	v
+tlen	pcap2sipp.h	/^	u_short tlen;           \/\/ Total length$/;"	m	struct:ip_header
+to_string	pcap2sipp.c	/^int to_string(ip_address ip, char *result){$/;"	f
+tos	pcap2sipp.h	/^	u_char  tos;            \/\/ Type of service$/;"	m	struct:ip_header
+ttl	pcap2sipp.h	/^	u_char  ttl;            \/\/ Time to live$/;"	m	struct:ip_header
+type	pcap2sipp.h	/^	int *type;$/;"	m	struct:sip_contents
+udp_header	pcap2sipp.h	/^typedef struct udp_header{$/;"	s
+udp_header	pcap2sipp.h	/^}udp_header;$/;"	t	typeref:struct:udp_header
+ver_ihl	pcap2sipp.h	/^	u_char  ver_ihl;        \/\/ Version (4 bits) + Internet header length (4 bits)$/;"	m	struct:ip_header
+what_to_wait_for	pcap2sipp.c	/^int what_to_wait_for(char **text, int *type, char* sc){$/;"	f

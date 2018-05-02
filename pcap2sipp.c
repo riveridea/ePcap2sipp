@@ -38,6 +38,15 @@
 #include <libnet.h>
 #include <libnet/libnet-headers.h>
 
+int ipv4_addr_match(ip_address* addr1, ip_address* addr2)
+{
+    return ((addr1->byte1 == addr2->byte2) &&
+	    (addr1->byte1 == addr2->byte2) &&
+	    (addr1->byte1 == addr2->byte2) &&
+	    (addr1->byte1 == addr2->byte2));
+           
+}
+
 int to_string(ip_address ip, char *result){
 	sprintf(result,"%d.%d.%d.%d",ip.byte1,ip.byte2,ip.byte3,ip.byte4);
 	return 0;
@@ -96,7 +105,8 @@ char *get_callid(char *sc){
 
 	while (pch != NULL)	{
 		if (strlen(pch) == 8){
-			if (strncmp(pch,"Call-ID:",strlen(pch)) == 0) {
+			if ((strncmp(pch,"Call-ID:",strlen(pch)) == 0) || 
+			    (strncmp(pch,"Call-id:",strlen(pch)) == 0)) {
 				pch = strtok (NULL," \r\n");
 				return pch;
 			} else pch = strtok (NULL," \r\n");
@@ -174,13 +184,104 @@ int ethernet_length(const u_char *pkt_data, const int datalink) {
 	return -1;
 }
 
+char* get_sc(const struct pcap_pkthdr *header, const u_char *pkt_data, u_short* sport, u_short* dport, ip_header **pih)
+{
+	ip_header *ih;
+	udp_header *uh = NULL;
+	tcp_header *th = NULL;
+	char *sc;
+	u_int ip_len, aip_len = 0;
+
+	/* retrieve the position of the ip header */
+	int datalink_length = ethernet_length(pkt_data, datalink);
+	if (datalink_length == -1) return NULL;
+
+	ih = (ip_header *) (pkt_data + datalink_length);
+	
+	/* retrieve the position of the udp header */
+	ip_len = (ih->ver_ihl & 0xf) * 4;
+	aip_len += ip_len;
+
+	/* processing the ipip header*/
+	if (ih->proto == 4)
+	{
+	   // printf("this is IPIP packets\n");
+	    ih = (ip_header*)((u_char*)ih + ip_len); 
+	    ip_len = (ih->ver_ihl & 0xf) * 4;
+	    aip_len += ip_len;
+	}
+
+	//printf("protocl = %d\n", ih->proto);
+	if (ih->proto == 17)
+	{
+	    //printf("this is UDP pakcets\n");
+	    uh = (udp_header *) ((u_char*)ih + ip_len);
+	}
+	else if (ih->proto == 6)
+	{
+	    //printf("this is TCP packets\n");
+	    th = (tcp_header *)((u_char*)ih + ip_len);
+	}
+	else
+	    return NULL;
+
+	*pih = ih; //store the ipheader address
+
+	/* verify local_ip, local_port, remote_ip, remote_port*/
+	int match = 0;
+	char* saddr = NULL, *daddr = NULL; 
+	saddr = malloc( 16 * sizeof(char) );
+	if (saddr == NULL){
+		fprintf (stderr, "Cannot allocate memory\n");
+		return NULL;
+	}
+	to_string(ih->saddr, saddr);
+
+	daddr = malloc(16*sizeof(char));
+	if (daddr == NULL){
+		fprintf (stderr, "Cannot allocate memory\n");
+		return NULL;
+	}
+	to_string(ih->daddr, daddr);
+	
+	if (local_ip && remote_ip)
+	{
+	    if(!strcmp(local_ip, saddr))
+		match = !strcmp(remote_ip, daddr); 
+	    else if (!strcmp(remote_ip, saddr))
+		match = !strcmp(local_ip, daddr);
+	    if(match) 
+	    {
+	    printf("saddr: %s\n", saddr);
+	    printf("daddr: %s\n", daddr);
+	    printf("l_ip:  %s\n", local_ip);
+	    printf("r_ip:  %s\n", remote_ip);
+	    }
+
+	    if (!match) return NULL;
+	}
+	
+	/* retrieve the SIP contents */
+	uint32_t l4_off = (uh?(sizeof(u_short))*4:(th->off)*4);
+	sc = (char *) ((uh?(u_char*)uh:(u_char*)th) + l4_off);
+
+	int pos = header->len-aip_len-l4_off-16;
+	if(pos >= 0)
+	    sc[pos]='\0';
+
+	*sport = ntohs(uh?uh->sport:th->sport);
+	*dport = ntohs(uh?uh->dport:th->dport);
+	
+	return sc;
+}
 
 void packet_handler_ips(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data)
 {
 	ip_header *ih;
-	udp_header *uh;
+	udp_header *uh = NULL;
+	tcp_header *th = NULL;
 	char *sc;
-	u_int ip_len;
+	u_int ip_len, aip_len = 0;
 	u_short sport,dport;
 
 	/* retrieve the position of the ip header */
@@ -188,18 +289,44 @@ void packet_handler_ips(u_char *param, const struct pcap_pkthdr *header, const u
 	if (datalink_length == -1) return;
 
 	ih = (ip_header *) (pkt_data + datalink_length);
-
+	
 	/* retrieve the position of the udp header */
 	ip_len = (ih->ver_ihl & 0xf) * 4;
+	aip_len += ip_len;
 
-	uh = (udp_header *) ((u_char*)ih + ip_len);
+	/* processing the ipip header*/
+	if (ih->proto == 4)
+	{
+	   // printf("this is IPIP packets\n");
+	    ih = (ip_header*)((u_char*)ih + ip_len); 
+	    ip_len = (ih->ver_ihl & 0xf) * 4;
+	    aip_len += ip_len;
+	}
+
+	//printf("protocl = %d\n", ih->proto);
+	if (ih->proto == 17)
+	{
+	    //printf("this is UDP pakcets\n");
+	    uh = (udp_header *) ((u_char*)ih + ip_len);
+	}
+	else if (ih->proto == 6)
+	{
+	    //printf("this is TCP packets\n");
+	    th = (tcp_header *)((u_char*)ih + ip_len);
+	}
+	else
+	    return;
 
 	/* retrieve the SIP contents */
-	sc = (char *) ((u_char*)uh + (sizeof(u_short))*4);
-	sc[header->len-ip_len-(sizeof(u_short))*4-16]='\0';
+	uint32_t l4_off = (uh?(sizeof(u_short))*4:(th->off)*4);
+	//sc = (char *) ((u_char*)(uh) + (sizeof(u_short))*4);
+	sc = (char *) ((uh?(u_char*)uh:(u_char*)th) + l4_off);
 
-	sport = ntohs( uh->sport );
-	dport = ntohs( uh->dport );
+	//sc[header->len-ip_len-(sizeof(u_short))*4-16]='\0';
+	sc[header->len-aip_len-l4_off-16]='\0';
+
+	sport = ntohs(uh?uh->sport:th->sport);
+	dport = ntohs(uh?uh->dport:th->dport);
 
 	if ((sport == 5060) || (dport == 5060) || (is_sip(sc))) {
 		if (!in_ipnodelist(ip_addresses, ih->saddr)){
@@ -589,9 +716,7 @@ char *handle_all_headers(char *rep, int type, char *saddr, char *daddr){
 
 void packet_handler_simulate(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data) {
 	ip_header *ih;
-	udp_header *uh;
 	char *sc;
-	u_int ip_len;
 	u_short sport,dport;
 	char *saddr=NULL;
 	char *daddr=NULL;
@@ -603,27 +728,14 @@ void packet_handler_simulate(u_char *param, const struct pcap_pkthdr *header, co
 	int line_nr = 0;
 	char *ip_port;
 
-	/* retrieve the position of the ip header */
-	int datalink_length = ethernet_length( pkt_data, datalink );
-	if (datalink_length == -1) return;
+        sc = get_sc(header, pkt_data, &sport, &dport, &ih);
+	if (!sc) return;
 
-	ih = (ip_header *) (pkt_data + datalink_length);
-
-	/* retrieve the position of the udp header */
-	ip_len = (ih->ver_ihl & 0xf) * 4;
-
-	uh = (udp_header *) ((u_char*)ih + ip_len);
-
-	/* retrieve the SIP contents */
-	sc = (char *) ((u_char*)uh + (sizeof(u_short)) * 4);
-	sc[header->len - ip_len - (sizeof(u_short)) * 4 - 16] = '\0';
-
-	sport = ntohs( uh->sport );
-	dport = ntohs( uh->dport );
-	
+	printf("%d %d\n", sport, dport);
 	if ((sport == 5060) || (dport == 5060) || (is_sip(sc)))
 	{
 		callid = get_callid(sc);
+		printf("%s \n", callid);
 		if (callid != NULL){
 			if ( strcmp(sim_callid, callid) == 0 ){
 				
@@ -646,7 +758,8 @@ void packet_handler_simulate(u_char *param, const struct pcap_pkthdr *header, co
 				if ( (this_is_first_request == 1) && (type == REPLY) )
 					fprintf(stderr,"ERROR: scenario incomplete, started with a reply");
 
-				//printf("%d %d %d  --------------- \n",port,sport,dport);
+				printf("%d %d %d  --------------- \n",port,sport,dport);
+				printf("%s %s %s  --------------- \n",saddr, daddr, sim_ip);
 				if (strcmp(sim_ip, saddr) == 0 && sport == port){
 					handle_receive(text,type);
 				} else if (strcmp(sim_ip, daddr) == 0 && dport == port){
@@ -782,9 +895,10 @@ void packet_handler_simulate(u_char *param, const struct pcap_pkthdr *header, co
 
 void packet_handler_callids(u_char *param, const struct pcap_pkthdr *header, const u_char *pkt_data) {
 	ip_header *ih;
-	udp_header *uh;
+	udp_header *uh = NULL;
+	tcp_header *th = NULL;
 	char *sc;
-	u_int ip_len;
+	u_int ip_len = 0, aip_len = 0;
 	u_short sport,dport;
 	char * callid;
 
@@ -793,24 +907,69 @@ void packet_handler_callids(u_char *param, const struct pcap_pkthdr *header, con
 	if (datalink_length == -1) return;
 
 	ih = (ip_header *) (pkt_data + datalink_length);
-
+	
 	/* retrieve the position of the udp header */
 	ip_len = (ih->ver_ihl & 0xf) * 4;
+	aip_len += ip_len;
 
-	uh = (udp_header *) ((u_char*)ih + ip_len);
+	/* processing the ipip header*/
+	if (ih->proto == 4)
+	{
+	   // printf("this is IPIP packets\n");
+	    ih = (ip_header*)((u_char*)ih + ip_len); 
+	    ip_len = (ih->ver_ihl & 0xf) * 4;
+	    aip_len += ip_len;
+	}
+
+	//printf("protocl = %d\n", ih->proto);
+	if (ih->proto == 17)
+	{
+	    //printf("this is UDP pakcets\n");
+	    uh = (udp_header *) ((u_char*)ih + ip_len);
+	}
+	else if (ih->proto == 6)
+	{
+	    //printf("this is TCP packets\n");
+	    th = (tcp_header *)((u_char*)ih + ip_len);
+	}
+	else
+	    return;
 
 	/* retrieve the SIP contents */
-	sc = (char *) ((u_char*)uh + (sizeof(u_short))*4);
-	sc[header->len - ip_len - (sizeof(u_short)) * 4 - 16] = '\0';
+	uint32_t l4_off = (uh?(sizeof(u_short))*4:(th->off)*4);
+	if(th)
+	{
+	    printf("sport: %d\n", ntohs(th->sport));
+	    printf("dport: %d\n", ntohs(th->dport));
+	    printf("seq:   %d\n", ntohs(th->seq));
+	    printf("ack:   %d\n", ntohs(th->ack));
 
-	sport = ntohs( uh->sport );
-	dport = ntohs( uh->dport );
+	    printf("header->len: %d\n", header->len);
+	    printf("aip_len:     %d\n", aip_len);
+	    printf("l4_off: 	 %d\n", l4_off);
+	}
+	//sc = (char *) ((u_char*)uh + (sizeof(u_short))*4);
+	sc = (char *) ((uh?(u_char*)uh:(u_char*)th) + l4_off);
+	//sc[header->len - ip_len - (sizeof(u_short)) * 4 - 16] = '\0';
+
+	int pos = header->len-aip_len-l4_off-16;
+        if (pos >= 0)
+	    sc[header->len-aip_len-l4_off-16]='\0';
+
+	sport = ntohs(uh?uh->sport:th->sport);
+	dport = ntohs(uh?uh->dport:th->dport);
+	//sport = ntohs( uh->sport );
+	//dport = ntohs( uh->dport );
 
 	if ((sport==5060) || (dport==5060) || (is_sip(sc)))
 	{
 		callid = get_callid(sc);
 		if (callid != NULL)
-			if ( !in_stringlist(callids, callid) ) add_stringnodes(&callids, callid);
+			if ( !in_stringlist(callids, callid) ) 
+			{
+			    add_stringnodes(&callids, callid);
+			    printf("callid: %s\n", callid);
+			}
 	}
 }
 

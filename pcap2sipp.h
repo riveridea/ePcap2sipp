@@ -51,6 +51,27 @@ typedef struct ethernet_header
 	u_int16_t ether_type;                 /* protocol */
 }ethernet_header;
 
+typedef struct tcp_header
+{
+    uint16_t sport;		/* source port */
+    uint16_t dport;		/* destination port */
+    uint32_t seq;		/* sequence number */
+    uint32_t ack;		/* acknowledgement number */
+    uint8_t  x2:4;		/* data offset */
+    uint8_t  off:4;		/* (unused) */
+    uint8_t  flags;
+#  define TH_FIN	0x01
+#  define TH_SYN	0x02
+#  define TH_RST	0x04
+#  define TH_PUSH	0x08
+#  define TH_ACK	0x10
+#  define TH_URG	0x20
+    uint16_t win;		/* window */
+    uint16_t chksum;		/* checksum */
+    uint16_t urp;		/* urgent pointer */
+}tcp_header;
+
+
 /* IPv4 header */
 typedef struct ip_header{
 	u_char  ver_ihl;        // Version (4 bits) + Internet header length (4 bits)
